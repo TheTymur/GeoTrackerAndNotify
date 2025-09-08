@@ -1,31 +1,24 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QGridLayout
+
 
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Signals & Slots")
 
-        # Widgets
-        self.label = QLabel("Press the button")
-        self.button = QPushButton("Click Me!")
+        self.setWindowTitle("Grid Layout Example")
+        self.resize(400, 200)
 
-        # Connect button click to a function
-        self.button.clicked.connect(self.on_button_click)
+        self.layout = QGridLayout()
 
-        # Layout
-        layout = QVBoxLayout()
-        layout.addWidget(self.label)
-        layout.addWidget(self.button)
-        self.setLayout(layout)
+        self.layout.addWidget(QLabel("Top Center (span 2)"), 0, 1, 1, 2)
+        self.layout.addWidget(QPushButton("Left Bottom"), 1, 0)
+        self.layout.addWidget(QPushButton("Right Bottom"), 1, 2)                #shift+alt to start typing
+        self.layout.addWidget(QPushButton("Full Width Bottom"), 2, 0, 1, 3)
 
-    def on_button_click(self):
-        if self.label.text() == "Press the button":
-            self.label.setText("It was clicked for first time!")
-        else:
-            self.label.setText("Button was clicked!")
+        self.setLayout(self.layout)
 
 app = QApplication(sys.argv)
-screen = MyWindow()
-screen.show()
+window = MyWindow()
+window.show()
 sys.exit(app.exec_())
