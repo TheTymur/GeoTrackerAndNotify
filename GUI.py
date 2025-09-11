@@ -3,23 +3,27 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QGridLay
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 
-font_header = QFont("Arial", 16, QFont.Bold)
-font_simple = QFont("Arial", 12)
-class MyWindow(QWidget):
+class MyGeoTrackerUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.wrong_button = False
-        self.times_clicked = 0
+        self._setup_constants()
+        self._setup_UI()
+        
+        
+    def _setup_constants(self):
+        self.font_header = QFont("Arial", 16, QFont.Bold)
+        self.font_simple = QFont("Arial", 12)
 
+    def _setup_UI(self):
         self.setWindowTitle("GeoTracker")
         self.setWindowIcon(QIcon("GeoT.png"))
         self.resize(800, 800)
 
         self.layout = QGridLayout()
         self.title = QLabel("GeoTracker")
-        self.title.setFont(font_header)
+        self.title.setFont(self.font_header)
         self.location = QLabel("Location: Unknown")
-        self.location.setFont(font_simple)
+        self.location.setFont(self.font_simple)
         self.button_findme = QPushButton("Find me")
         self.button_findme.setFixedSize(200,50)
 
@@ -30,11 +34,10 @@ class MyWindow(QWidget):
         self.layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding), 3, 0, 1, 3)
         self.layout.addWidget(self.button_findme, 4,0,1,3, alignment= Qt.AlignCenter)
 
-
         self.setLayout(self.layout)
 
 
 app = QApplication(sys.argv)
-window = MyWindow()
+window = MyGeoTrackerUI()
 window.show()
 sys.exit(app.exec_())
