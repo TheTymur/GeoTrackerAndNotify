@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h3>Detecting your location through browser...</h3>
+        <div id="status">Requesting premission to GPS...</div>
+        <script>
+            function show(msg){document.getElementById("status").innerText = msg;}
+            function SendLocation(){
+                if(!navigator.geolocation) {
+                show("Your broswer doesn't have access to GPS.");
+            }
+            else{
+                navigator.geolocation.getCurrentPosition(
+                    function(pos){
+                        show("Got coordinates, sending to the server...");
+                        fetch("/location", {
+                            method: "POST",
+                            headers: {"Content-Type": "application/json"},
+                            body: JSON.stringify({lat: pos.coords.latitude, lon: pos.coords.longitude})             
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            if(data.error) show("Error: " + data.error);
+                            else show("Your location: " + data.address);
+                        })
+                        .catch(err => show("Error sending coordinates: " + err));
+                    },
+                    function(err){
+                        show("Could not get GPS: " + err.message);
+                    },
+                    {enableHighAccuracy: true, timeout: 10000}
+                );
+            }
+            }
+            
+            SendLocation();
+
+            setInterval(SendLocation, 5 * 60 * 1000);
+
+        </script>
+    </body>
+</html>

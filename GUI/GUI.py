@@ -13,7 +13,7 @@ class MyGeoTrackerUI(QWidget):
         
 
     def set_location(self, location_txt: str):
-        self.location.setText(f"location: {location_txt}")   
+        self.location.setText(f"Location: {location_txt}")   
         
     def _setup_constants(self):
         self.font_header = QFont("Arial", 16, QFont.Bold)
@@ -21,7 +21,7 @@ class MyGeoTrackerUI(QWidget):
 
     def _setup_UI(self):
         self.setWindowTitle("GeoTracker")
-        self.setWindowIcon(QIcon("GeoT.png"))
+        self.setWindowIcon(QIcon("C:\Python\GeoTrackerAndNotify\GUI\GeoT.png"))
         self.resize(800, 800)
 
         self.layout = QGridLayout()
@@ -40,9 +40,3 @@ class MyGeoTrackerUI(QWidget):
         self.layout.addWidget(self.button_findme, 4,0,1,3, alignment= Qt.AlignCenter)
         self.setLayout(self.layout)
 
-
-def run():
-    app = QApplication(sys.argv)
-    window = MyGeoTrackerUI()
-    window.show()
-    sys.exit(app.exec_())
