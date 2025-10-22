@@ -1,10 +1,12 @@
 import time
 import threading
 import requests
+from GUI import ErrorHandler
 from flask import Flask, request, jsonify, render_template
  
 __all__ = ["run_server"]
 
+error_handler = ErrorHandler()
 app = Flask(__name__, template_folder="../templates")
 
 OPENCAGE_API_KEY = "5c93c2c618f64dae899135c2793d13ce"
@@ -27,11 +29,9 @@ def location():
         return jsonify({"error": "Coordinates not provided"}), 400
     
     latest_coords = {"lat": lat, "lon": lon}
-    print(f"Coordinates recieved succesfully: {lat}, {lon}")
 
     address = get_address(lat,lon)
     if address:
-        print(f"Adress: {address}")
         return jsonify({"address": address})
     else:
         return jsonify({"error": "Adress not found"}), 404
@@ -53,20 +53,20 @@ def get_address(lat, lon):
         if result.get("results"):
             return result["results"][0].get("formatted")
     except Exception as e:
-        print("Error getting address:", e)
+        error_handler.show_error(f"Error getting address: {e}")
     return None
 
 def background_task():
+    global address
+    time.sleep(10)
+
     while True:
         if latest_coords is not None:
             lat = latest_coords["lat"]
             lon = latest_coords["lon"]
             address = get_address(lat, lon)
-            if address:
-                print(f"Coordinates: {lat}, {lon}")
-                print(f"Address: {address}")
-            else:
-                print("Could not update address.")
+            if not address:
+                error_handler.show_error("Could not update address.")
             time.sleep(300)
 
 def run_server():

@@ -1,9 +1,9 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QGridLayout, QSpacerItem, QSizePolicy
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QGridLayout, QSpacerItem, QSizePolicy, QMessageBox
+from PyQt5.QtCore import Qt, QObject, pyqtSignal
 from PyQt5.QtGui import QFont, QIcon
 
-__all__ = ["run", "MyGeoTrackerUI", "set_location"]
+__all__ = ["MyGeoTrackerUI", "set_location", "ErrorHandler"]
 
 class MyGeoTrackerUI(QWidget):
     def __init__(self):
@@ -39,4 +39,27 @@ class MyGeoTrackerUI(QWidget):
         self.layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding), 3, 0, 1, 3)
         self.layout.addWidget(self.button_findme, 4,0,1,3, alignment= Qt.AlignCenter)
         self.setLayout(self.layout)
+
+
+class ErrorHandler(QObject):
+    show_error_signal = pyqtSignal(str)
+
+    def __init__(self):
+        super().__init__()
+        self.show_error_signal.connect(self._show_error)
+
+    def show_error(self, msg):
+        self.show_error_signal.emit(msg)
+    
+    def _show_error(self, msg):
+        self.box = QMessageBox()
+        self.box.setWindowTitle("Error")
+        self.box.setWindowIcon(QIcon("C:\Python\GeoTrackerAndNotify\GUI\error.png"))
+        self.box.setText(msg)
+        self.box.setIcon(QMessageBox.Critical)
+        self.box.setStandardButtons(QMessageBox.Ok)
+        self.box.exec_() 
+
+
+
 

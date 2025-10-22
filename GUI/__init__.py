@@ -1,1 +1,2 @@
-from .GUI import MyGeoTrackerUI
+from .setup_GUI import MyGeoTrackerUI, ErrorHandler
+
