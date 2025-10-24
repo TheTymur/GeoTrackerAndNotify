@@ -1,12 +1,12 @@
 import time
 import threading
 import requests
-from GUI import ErrorHandler
+from GUI import ErrorNotify
 from flask import Flask, request, jsonify, render_template
  
 __all__ = ["run_server"]
 
-error_handler = ErrorHandler()
+error_handler = ErrorNotify()
 app = Flask(__name__, template_folder="../templates")
 
 OPENCAGE_API_KEY = "5c93c2c618f64dae899135c2793d13ce"

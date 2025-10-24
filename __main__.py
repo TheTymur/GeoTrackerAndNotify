@@ -1,4 +1,4 @@
-from GUI import MyGeoTrackerUI
+from GUI import MyGeoTrackerUI, setup_Reminder_screen
 from Event_manager import Event_manager
 from PyQt5.QtWidgets import QApplication
 from Event_manager import run_server
@@ -12,10 +12,12 @@ if __name__ == "__main__":
     flask_thread.start()
 
     app = QApplication(sys.argv)
-    window = MyGeoTrackerUI()
+    main_window = MyGeoTrackerUI()
+    reminder_window = setup_Reminder_screen()
+
 
     manager = Event_manager()   
-    manager.conect_signals(window)
+    manager.connect_signals(main_window)
 
-    window.show()
+    main_window.show()
     sys.exit(app.exec_())

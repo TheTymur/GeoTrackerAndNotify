@@ -1,28 +1,73 @@
-from GUI import MyGeoTrackerUI
+from GUI import MyGeoTrackerUI, setup_Reminder_screen, ErrorNotify
 from . import location_getter_api
+from . import reminder_repository
+from datetime import date, datetime
+from pathlib import Path
 
 __all__ = ["Event_manager"]
 
+saved_reminders_path = Path(r"C:\Python\GeoTrackerAndNotify\saved_reminders\saved_reminders.db")
 
 class Event_manager:
     def __init__(self):
         self.clicked = 0
+        self.reminder_window = None
+        self.reminder_repo = reminder_repository.RemindersRepositoryORM(saved_reminders_path)
+        self.error_notify = ErrorNotify()
 
-    def update_location(self, window: MyGeoTrackerUI):
+    def open_create_reminder_window(self):
+        if self.reminder_window is None:
+            self.reminder_window = setup_Reminder_screen()
+            self.reminder_window.destroyed.connect(self._on_reminder_closed)
+
+            self.reminder_window.cancel_button.clicked.connect(self.reminder_window.close)
+            self.reminder_window.save_button.clicked.connect(self.save_new_reminder)
+
+        self.reminder_window.input_address.clear()
+        self.reminder_window.input_reminderName.clear()
+
+
+        self.reminder_window.show()
+        self.reminder_window.raise_()
+        self.reminder_window.activateWindow()
+
+
+
+    def _on_reminder_closed(self):
+        self.reminder_window = None
+
+    def update_location(self, main_window: MyGeoTrackerUI):
+        pass
+
+    def save_new_reminder(self):
         current_address = location_getter_api.address
-        if self.clicked:
-            if current_address:
-                window.set_location(current_address)
-                self.clicked = 0
-            else:
-                window.set_location("Unknown")
-                self.clicked = 0
-        else: 
-            window.set_location("Krakow")
-            self.clicked = 1
+        name_of_reminder = self.reminder_window.input_reminderName.text().strip()
+        address = self.reminder_window.input_address.text().strip()
+        date_of_reminder = self.reminder_window.input_date.text().strip()
 
+        date_format = "%d.%m.%Y"
+
+        try:
+            parsed_date_object = datetime.strptime(date_of_reminder, date_format).date()
+
+        except ValueError:
+            self.error_notify.show_error(f"The date '{date_of_reminder}' is not in the correct format (DD.MM.YYYY).")
+            return
+
+        if current_address is not None:
+            self.error_notify.show_error("Warning!\n Your current location is unknown!")
+        
+        new_reminder = {
+            "name": name_of_reminder,
+            "address": current_address if not address else address,
+            "date": parsed_date_object
+        }
+
+        self.reminder_repo.add_reminder(new_reminder)
+        self.reminder_window.close()
+        
  
-    def conect_signals(self, window: MyGeoTrackerUI):
-        window.button_findme.clicked.connect(lambda: self.update_location(window))
-
+    def connect_signals(self, main_window: MyGeoTrackerUI):
+        main_window.button_createReminder.clicked.connect(self.open_create_reminder_window)
+        
 
