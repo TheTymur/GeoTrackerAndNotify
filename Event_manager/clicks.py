@@ -1,7 +1,7 @@
 from GUI import MyGeoTrackerUI, setup_Reminder_screen, ErrorNotify
 from . import location_getter_api
 from . import reminder_repository
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 
 __all__ = ["Event_manager"]
@@ -10,10 +10,10 @@ saved_reminders_path = Path(r"C:\Python\GeoTrackerAndNotify\saved_reminders\save
 
 class Event_manager:
     def __init__(self):
-        self.clicked = 0
         self.reminder_window = None
         self.reminder_repo = reminder_repository.RemindersRepositoryORM(saved_reminders_path)
         self.error_notify = ErrorNotify()
+        
 
     def open_create_reminder_window(self):
         if self.reminder_window is None:
@@ -25,19 +25,22 @@ class Event_manager:
 
         self.reminder_window.input_address.clear()
         self.reminder_window.input_reminderName.clear()
+        self.reminder_window.input_date.clear()
 
 
         self.reminder_window.show()
         self.reminder_window.raise_()
         self.reminder_window.activateWindow()
 
-
+    def get_all_reminder(self):
+        print(self.reminder_repo.get_all())
 
     def _on_reminder_closed(self):
         self.reminder_window = None
 
     def update_location(self, main_window: MyGeoTrackerUI):
         pass
+
 
     def save_new_reminder(self):
         current_address = location_getter_api.address
@@ -54,7 +57,7 @@ class Event_manager:
             self.error_notify.show_error(f"The date '{date_of_reminder}' is not in the correct format (DD.MM.YYYY).")
             return
 
-        if current_address is not None:
+        if current_address is None:
             self.error_notify.show_error("Warning!\n Your current location is unknown!")
         
         new_reminder = {
@@ -67,7 +70,8 @@ class Event_manager:
         self.reminder_window.close()
         
  
-    def connect_signals(self, main_window: MyGeoTrackerUI):
+    def create_reminder_signal_connection(self, main_window: MyGeoTrackerUI):
         main_window.button_createReminder.clicked.connect(self.open_create_reminder_window)
+        main_window.button_getAll.clicked.connect(self.get_all_reminder)
         
 

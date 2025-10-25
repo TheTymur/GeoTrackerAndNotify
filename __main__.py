@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
 
     manager = Event_manager()   
-    manager.connect_signals(main_window)
+    manager.create_reminder_signal_connection(main_window)
 
     main_window.show()
     sys.exit(app.exec_())
