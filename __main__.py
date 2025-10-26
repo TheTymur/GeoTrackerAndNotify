@@ -16,7 +16,7 @@ if __name__ == "__main__":
     reminder_window = setup_Reminder_screen()
 
 
-    manager = Event_manager()   
+    manager = Event_manager(main_window)   
     manager.create_reminder_signal_connection(main_window)
 
     main_window.show()

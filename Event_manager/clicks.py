@@ -1,5 +1,7 @@
 from GUI import MyGeoTrackerUI, setup_Reminder_screen, ErrorNotify
 from . import location_getter_api
+import threading
+import time
 from . import reminder_repository
 from datetime import datetime
 from pathlib import Path
@@ -9,10 +11,12 @@ __all__ = ["Event_manager"]
 saved_reminders_path = Path(r"C:\Python\GeoTrackerAndNotify\saved_reminders\saved_reminders.db")
 
 class Event_manager:
-    def __init__(self):
+    def __init__(self, main_window):
         self.reminder_window = None
         self.reminder_repo = reminder_repository.RemindersRepositoryORM(saved_reminders_path)
+        self.main = main_window
         self.error_notify = ErrorNotify()
+        threading.Thread(target=self.background_update_location, daemon=True).start()
         
 
     def open_create_reminder_window(self):
@@ -31,6 +35,7 @@ class Event_manager:
         self.reminder_window.show()
         self.reminder_window.raise_()
         self.reminder_window.activateWindow()
+    
 
     def get_all_reminder(self):
         print(self.reminder_repo.get_all())
@@ -38,8 +43,17 @@ class Event_manager:
     def _on_reminder_closed(self):
         self.reminder_window = None
 
-    def update_location(self, main_window: MyGeoTrackerUI):
-        pass
+    def background_update_location(self):
+        while True:
+            if location_getter_api.address is None:
+                address = "Unknown"
+            else:
+                address = location_getter_api.address
+
+            self.main.set_location(address)
+
+            time.sleep(300)
+
 
 
     def save_new_reminder(self):

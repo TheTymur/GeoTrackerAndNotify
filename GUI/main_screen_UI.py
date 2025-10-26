@@ -1,4 +1,3 @@
-import sys
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QGridLayout, QSpacerItem, QSizePolicy
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
@@ -10,10 +9,9 @@ class MyGeoTrackerUI(QWidget):
         super().__init__()
         self._setup_constants()
         self._setup_UI()
-        
 
-    def set_location(self, location_txt: str):
-        self.location.setText(f"Location: {location_txt}")   
+    def set_location(self, location_address):
+        self.location.setText(f"Location: {location_address}")   
         
     def _setup_constants(self):
         self.font_header = QFont("Arial", 16, QFont.Bold)
