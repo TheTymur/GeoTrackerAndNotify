@@ -15,7 +15,7 @@ class Reminder(Base):
     date = Column(Date)
 
     def __repr__(self):
-        return f"<Reminder(name={self.name}, address={self.address}, date={self.date})>"
+        return f"<Reminder(id= {id}, name={self.name}, address={self.address}, date={self.date})>"
     
 class RemindersRepositoryORM:
     def __init__(self, database_path):
@@ -30,7 +30,7 @@ class RemindersRepositoryORM:
         return self.session.scalars(select(Reminder)).all()
 
     def add_reminder(self, reminder_data):
-        new_reminder = Reminder(
+        new_reminder = Reminder( 
             name=reminder_data["name"],
             address=reminder_data["address"],
             date=reminder_data["date"]

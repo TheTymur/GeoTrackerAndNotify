@@ -1,5 +1,6 @@
 from GUI import MyGeoTrackerUI, setup_Reminder_screen, ErrorNotify
 from . import location_getter_api
+from PyQt5.QtCore import QObject, pyqtSignal
 import threading
 import time
 from . import reminder_repository
@@ -10,8 +11,12 @@ __all__ = ["Event_manager"]
 
 saved_reminders_path = Path(r"C:\Python\GeoTrackerAndNotify\saved_reminders\saved_reminders.db")
 
-class Event_manager:
+class Event_manager(QObject):
+
+    location_updated = pyqtSignal(str)
+
     def __init__(self, main_window):
+        super().__init__()
         self.reminder_window = None
         self.reminder_repo = reminder_repository.RemindersRepositoryORM(saved_reminders_path)
         self.main = main_window
@@ -38,7 +43,8 @@ class Event_manager:
     
 
     def get_all_reminder(self):
-        print(self.reminder_repo.get_all())
+        all_reminders = self.reminder_repo.get_all()
+        self.main.update_reminder_list(all_reminders)
 
     def _on_reminder_closed(self):
         self.reminder_window = None
@@ -50,7 +56,7 @@ class Event_manager:
             else:
                 address = location_getter_api.address
 
-            self.main.set_location(address)
+            self.location_updated.emit(address)
 
             time.sleep(300)
 
@@ -81,6 +87,7 @@ class Event_manager:
 
         self.reminder_repo.add_reminder(new_reminder)
         self.reminder_window.close()
+        self.get_all_reminder()
         
  
     def create_reminder_signal_connection(self, main_window: MyGeoTrackerUI):

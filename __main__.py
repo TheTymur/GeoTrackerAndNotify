@@ -13,11 +13,10 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
     main_window = MyGeoTrackerUI()
-    reminder_window = setup_Reminder_screen()
-
 
     manager = Event_manager(main_window)   
     manager.create_reminder_signal_connection(main_window)
+    manager.location_updated.connect(main_window.set_location)
 
     main_window.show()
     sys.exit(app.exec_())

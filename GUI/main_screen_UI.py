@@ -4,15 +4,15 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton,
                              QVBoxLayout, QFrame)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
+from pathlib import Path
+__all__ = ["MyGeoTrackerUI", "set_location"] 
+saved_reminders_path = Path(r"C:\Python\GeoTrackerAndNotify\saved_reminders\saved_reminders.db")
 
-# __all__ = ["MyGeoTrackerUI", "set_location"] # This is fine for module use
-
-# A dummy widget to represent a single reminder in the list
 class ReminderWidget(QFrame):
     def __init__(self, reminder_text):
         super().__init__()
         self.setFrameShape(QFrame.StyledPanel)
-        self.setFixedHeight(60)
+        self.setFixedHeight(70)
         
         self.layout = QVBoxLayout()
         self.label = QLabel(reminder_text)
@@ -23,7 +23,6 @@ class ReminderWidget(QFrame):
 class MyGeoTrackerUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.reminder_count = 0 # To add demo reminders
         self._setup_constants()
         self._setup_UI()
 
@@ -88,5 +87,20 @@ class MyGeoTrackerUI(QWidget):
         self.layout.setColumnStretch(1, 1)
 
         self.setLayout(self.layout)
+
+    def update_reminder_list(self, reminders_list):
+
+        while self.reminders_layout.count():
+            child = self.reminders_layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+        for reminder in reminders_list:
+            text = f"ID: {reminder.id} <b> {reminder.name} </b> <br>At: {reminder.address}"
+            new_widget = ReminderWidget(text)
+            self.reminders_layout.addWidget(new_widget)        
+
+        
+
 
 
