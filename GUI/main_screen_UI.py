@@ -11,12 +11,13 @@ saved_reminders_path = Path(r"C:\Python\GeoTrackerAndNotify\saved_reminders\save
 class ReminderWidget(QFrame):
     def __init__(self, reminder_text):
         super().__init__()
-        self.setFrameShape(QFrame.StyledPanel)
-        self.setFixedHeight(70)
-        
+        self.setFrameShape(QFrame.StyledPanel)        
         self.layout = QVBoxLayout()
         self.label = QLabel(reminder_text)
         self.label.setFont(QFont("Arial", 11))
+        
+        self.label.setWordWrap(True)
+
         self.layout.addWidget(self.label)
         self.setLayout(self.layout)
 

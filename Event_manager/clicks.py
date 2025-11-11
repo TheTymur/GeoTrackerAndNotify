@@ -76,8 +76,9 @@ class Event_manager(QObject):
             self.error_notify.show_error(f"The date '{date_of_reminder}' is not in the correct format (DD.MM.YYYY).")
             return
 
-        if current_address is None:
+        if current_address is None and address == "":
             self.error_notify.show_error("Warning!\n Your current location is unknown!")
+            return
         
         new_reminder = {
             "name": name_of_reminder,
