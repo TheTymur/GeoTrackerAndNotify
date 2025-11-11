@@ -1,51 +1,92 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QGridLayout, QSpacerItem, QSizePolicy
+import sys
+from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, 
+                             QGridLayout, QSpacerItem, QSizePolicy, QScrollArea, 
+                             QVBoxLayout, QFrame)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 
-__all__ = ["MyGeoTrackerUI", "set_location"]
+# __all__ = ["MyGeoTrackerUI", "set_location"] # This is fine for module use
+
+# A dummy widget to represent a single reminder in the list
+class ReminderWidget(QFrame):
+    def __init__(self, reminder_text):
+        super().__init__()
+        self.setFrameShape(QFrame.StyledPanel)
+        self.setFixedHeight(60)
+        
+        self.layout = QVBoxLayout()
+        self.label = QLabel(reminder_text)
+        self.label.setFont(QFont("Arial", 11))
+        self.layout.addWidget(self.label)
+        self.setLayout(self.layout)
 
 class MyGeoTrackerUI(QWidget):
     def __init__(self):
         super().__init__()
+        self.reminder_count = 0 # To add demo reminders
         self._setup_constants()
         self._setup_UI()
 
     def set_location(self, location_address):
-        self.location.setText(f"Location: {location_address}")   
+        self.location.setText(f"Location: {location_address}")
         
     def _setup_constants(self):
         self.font_header = QFont("Arial", 16, QFont.Bold)
         self.font_simple = QFont("Arial", 12)
         self.font_smaller_simple = QFont("Arial", 10)
 
-
     def _setup_UI(self):
         self.setWindowTitle("GeoTracker")
-        self.setWindowIcon(QIcon("C:\Python\GeoTrackerAndNotify\GUI\Icons\GeoT.png"))
-        self.resize(800, 800)
+        self.setWindowIcon(QIcon(r"C:\Python\GeoTrackerAndNotify\GUI\Icons\GeoT.png"))
+        self.resize(800, 800) 
 
         self.layout = QGridLayout()
+
+        # Row 0
         self.title = QLabel("GeoTracker")
         self.title.setFont(self.font_header)
+        self.layout.addWidget(self.title, 0, 0, 1, 3, alignment=Qt.AlignTop | Qt.AlignHCenter)
+
+        # Row 1
         self.location = QLabel("Location: Unknown")
         self.location.setFont(self.font_simple)
+        self.layout.addWidget(self.location, 1, 0, 1, 3, alignment=Qt.AlignHCenter)
+
+        # Row 2
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setStyleSheet("background-color: white;")
+
+        # Container widget and layout for the scroll area's content
+        self.scroll_content = QWidget()
+        self.reminders_layout = QVBoxLayout(self.scroll_content) 
+        self.reminders_layout.setAlignment(Qt.AlignTop)
+
+        # Set the content widget into the scroll area
+        self.scroll_area.setWidget(self.scroll_content)
+        
+        # Add the scroll area to the main grid
+        self.layout.addWidget(self.scroll_area, 2, 0, 1, 3)
+
+        # Row 3
         self.button_createReminder = QPushButton("Create reminder")
         self.button_createReminder.setFont(self.font_smaller_simple)
-        self.button_createReminder.setFixedSize(200,50)
+        self.button_createReminder.setFixedSize(200, 50)
+        
         self.button_getAll = QPushButton("Get all reminders")
         self.button_getAll.setFont(self.font_smaller_simple)
-        self.button_getAll.setFixedSize(200,50)
+        self.button_getAll.setFixedSize(200, 50)
+        
+        # Add buttons to Row 3, in separate columns for correct alignment
+        self.layout.addWidget(self.button_getAll, 3, 0, alignment=Qt.AlignLeft)
+        self.layout.addWidget(self.button_createReminder, 3, 2, alignment=Qt.AlignRight)
 
-        self.layout.addWidget(self.title, 0,0,1,3, alignment=Qt.AlignTop | Qt.AlignHCenter)
-        # self.title.setContentsMargins(50, 0, 0, 0) if I wanted to make some space from the sides
-        self.layout.addItem(QSpacerItem(0, 80, QSizePolicy.Minimum, QSizePolicy.Fixed), 1, 0, 1, 3)
-        self.layout.addWidget(self.location, 2,0,1,3, alignment=Qt.AlignHCenter | Qt.AlignTop)
-        self.layout.addItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding), 3, 0, 1, 3)
-        self.layout.addWidget(self.button_createReminder, 4,0,1,3, alignment= Qt.AlignRight)
-        self.layout.addWidget(self.button_getAll, 4,0,1,2, alignment=Qt.AlignLeft)
+        # Make Row 2 (the scroll area) expand vertically
+        self.layout.setRowStretch(2, 1) 
+        
+        # Make Column 1 (the middle) expand horizontally, pushing buttons apart
+        self.layout.setColumnStretch(1, 1)
+
         self.setLayout(self.layout)
-
-
-
 
 

@@ -55,7 +55,6 @@ class Event_manager:
             time.sleep(300)
 
 
-
     def save_new_reminder(self):
         current_address = location_getter_api.address
         name_of_reminder = self.reminder_window.input_reminderName.text().strip()
