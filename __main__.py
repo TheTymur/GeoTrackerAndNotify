@@ -1,4 +1,4 @@
-from GUI import MyGeoTrackerUI, setup_Reminder_screen
+from GUI import MyGeoTrackerUI
 from Event_manager import Event_manager
 from PyQt5.QtWidgets import QApplication
 from Event_manager import run_server
@@ -19,4 +19,5 @@ if __name__ == "__main__":
     manager.location_updated.connect(main_window.set_location)
 
     main_window.show()
+
     sys.exit(app.exec_())

@@ -1,4 +1,4 @@
-from GUI import MyGeoTrackerUI, setup_Reminder_screen, ErrorNotify
+from GUI import MyGeoTrackerUI, setup_Reminder_screen, ErrorNotify, Permission_request
 from . import location_getter_api
 from PyQt5.QtCore import QObject, pyqtSignal
 import threading
@@ -6,6 +6,7 @@ import time
 from . import reminder_repository
 from datetime import datetime
 from pathlib import Path
+import webbrowser
 
 __all__ = ["Event_manager"]
 
@@ -21,7 +22,20 @@ class Event_manager(QObject):
         self.reminder_repo = reminder_repository.RemindersRepositoryORM(saved_reminders_path)
         self.main = main_window
         self.error_notify = ErrorNotify()
-        threading.Thread(target=self.background_update_location, daemon=True).start()
+        self.permission_requesting()
+
+
+    def permission_requesting(self):    
+        permission_box = Permission_request()
+        msg = "Would you like to give permission for geolocation?"
+        user_said_yes = permission_box.show_requestbox(msg)
+
+        print(user_said_yes)
+        if user_said_yes:
+            self.main.set_location("Please wait... We are getting your location.")
+            threading.Thread(target=self.background_update_location, daemon=True).start()
+        else:
+            self.main.set_location("Permission denied. Location tracking is off.")
         
 
     def open_create_reminder_window(self):
@@ -49,14 +63,26 @@ class Event_manager(QObject):
     def _on_reminder_closed(self):
         self.reminder_window = None
 
-    def background_update_location(self):
-        while True:
-            if location_getter_api.address is None:
-                address = "Unknown"
-            else:
-                address = location_getter_api.address
+    def background_update_location(self):  
+        url_to_open = "http://127.0.0.1:5000"
+        webbrowser.open(url=url_to_open)
+        self.address = None
 
-            self.location_updated.emit(address)
+        while self.address is None:
+            time.sleep(1.0)
+            self.address = location_getter_api.address
+
+        self.location_updated.emit(self.address)
+
+        while True:            
+            new_address = location_getter_api.address
+
+            if new_address != self.address:
+                self.address = new_address
+                if self.address is None:
+                    self.address = "Unknown" 
+
+                self.location_updated.emit(self.address)
 
             time.sleep(300)
 
