@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, select
+from sqlalchemy import create_engine, Column, Integer, String, Date, Time, select
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -13,9 +13,10 @@ class Reminder(Base):
     name = Column(String, nullable=False)
     address = Column(String)
     date = Column(Date)
+    time = Column(Time)
 
     def __repr__(self):
-        return f"<Reminder(id= {id}, name={self.name}, address={self.address}, date={self.date})>"
+        return f"<Reminder(id= {id}, name={self.name}, address={self.address}, date={self.date}, time={self.time})>"
     
 class RemindersRepositoryORM:
     def __init__(self, database_path):
@@ -33,7 +34,8 @@ class RemindersRepositoryORM:
         new_reminder = Reminder( 
             name=reminder_data["name"],
             address=reminder_data["address"],
-            date=reminder_data["date"]
+            date=reminder_data["date"],
+            time=reminder_data["time"]
         )
         self.session.add(new_reminder)
         self.session.commit()

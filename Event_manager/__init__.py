@@ -1,3 +1,4 @@
-from .clicks import Event_manager
-from .location_getter_api import run_server, address
-from .reminder_repository import RemindersRepositoryORM
+from .manager import EventManager
+from .location_service import run_server, address
+from .reminder_repository import RemindersRepositoryORM, Base
+from .notification_logic import NotificationLogic

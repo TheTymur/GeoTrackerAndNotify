@@ -17,7 +17,7 @@ class ErrorNotify(QObject):
     def _show_error(self, msg):
         self.box = QMessageBox()
         self.box.setWindowTitle("Error")
-        self.box.setWindowIcon(QIcon("C:\Python\GeoTrackerAndNotify\GUI\Icons\error.png"))
+        self.box.setWindowIcon(QIcon(r"./assets/Icons/error.png"))
         self.box.setText(msg)
         self.box.setIcon(QMessageBox.Critical)
         self.box.setStandardButtons(QMessageBox.Ok)

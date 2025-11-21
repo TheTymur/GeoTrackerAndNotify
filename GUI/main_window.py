@@ -1,12 +1,13 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, 
-                             QGridLayout, QSpacerItem, QSizePolicy, QScrollArea, 
+from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, 
+                             QGridLayout, QScrollArea, 
                              QVBoxLayout, QFrame)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
+import datetime
 from pathlib import Path
 __all__ = ["MyGeoTrackerUI", "set_location"] 
-saved_reminders_path = Path(r"C:\Python\GeoTrackerAndNotify\saved_reminders\saved_reminders.db")
+saved_reminders_path = Path(r"./saved_reminders/saved_reminders.db")
 
 class ReminderWidget(QFrame):
     def __init__(self, reminder_text):
@@ -37,7 +38,7 @@ class MyGeoTrackerUI(QWidget):
 
     def _setup_UI(self):
         self.setWindowTitle("GeoTracker")
-        self.setWindowIcon(QIcon(r"C:\Python\GeoTrackerAndNotify\GUI\Icons\GeoT.png"))
+        self.setWindowIcon(QIcon(r"./assets/Icons/GeoT.png"))
         self.resize(800, 800) 
 
         self.layout = QGridLayout()
@@ -69,7 +70,7 @@ class MyGeoTrackerUI(QWidget):
         self.layout.addWidget(self.scroll_area, 2, 0, 1, 3)
 
         # Row 3
-        self.button_createReminder = QPushButton("Create reminder")
+        self.button_createReminder = QPushButton("Create reminder") 
         self.button_createReminder.setFont(self.font_smaller_simple)
         self.button_createReminder.setFixedSize(200, 50)
         
@@ -97,9 +98,10 @@ class MyGeoTrackerUI(QWidget):
                 child.widget().deleteLater()
 
         for reminder in reminders_list:
-            text = f"ID: {reminder.id} <b> {reminder.name} </b> <br>At: {reminder.address}"
+            time =  reminder.time.strftime("%H:%M")
+            text = f"ID: {reminder.id} <b> {reminder.name} </b> <br>Remind at: {reminder.address}, {time}, on {reminder.date}"
             new_widget = ReminderWidget(text)
-            self.reminders_layout.addWidget(new_widget)        
+            self.reminders_layout.addWidget(new_widget)         
 
         
 

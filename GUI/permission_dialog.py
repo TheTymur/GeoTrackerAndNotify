@@ -1,11 +1,11 @@
-from PyQt5.QtWidgets import QMessageBox, QWidget
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtGui import QIcon
 
-class Permission_request():
+class PermissionRequest():
     def show_requestbox(self, msg):
         self.box = QMessageBox()
         self.box.setWindowTitle("Permission request")
-        self.box.setWindowIcon(QIcon("C:\Python\GeoTrackerAndNotify\GUI\Icons\permission.png"))
+        self.box.setWindowIcon(QIcon(r"./assets/Icons/permission.png"))
         self.box.setText(msg)
         self.box.setIcon(QMessageBox.Question)
         self.box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)

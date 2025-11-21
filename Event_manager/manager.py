@@ -1,5 +1,5 @@
-from GUI import MyGeoTrackerUI, setup_Reminder_screen, ErrorNotify, Permission_request
-from . import location_getter_api
+from GUI import MyGeoTrackerUI, ErrorNotify, PermissionRequest, setupReminderScreen
+from . import location_service
 from PyQt5.QtCore import QObject, pyqtSignal
 import threading
 import time
@@ -8,11 +8,11 @@ from datetime import datetime
 from pathlib import Path
 import webbrowser
 
-__all__ = ["Event_manager"]
+__all__ = ["EventManager"]
 
-saved_reminders_path = Path(r"C:\Python\GeoTrackerAndNotify\saved_reminders\saved_reminders.db")
+saved_reminders_path = Path(r"./saved_reminders/saved_reminders.db")
 
-class Event_manager(QObject):
+class EventManager(QObject):
 
     location_updated = pyqtSignal(str)
 
@@ -26,7 +26,7 @@ class Event_manager(QObject):
 
 
     def permission_requesting(self):    
-        permission_box = Permission_request()
+        permission_box = PermissionRequest()
         msg = "Would you like to give permission for geolocation?"
         user_said_yes = permission_box.show_requestbox(msg)
 
@@ -40,7 +40,7 @@ class Event_manager(QObject):
 
     def open_create_reminder_window(self):
         if self.reminder_window is None:
-            self.reminder_window = setup_Reminder_screen()
+            self.reminder_window = setupReminderScreen()
             self.reminder_window.destroyed.connect(self._on_reminder_closed)
 
             self.reminder_window.cancel_button.clicked.connect(self.reminder_window.close)
@@ -49,6 +49,7 @@ class Event_manager(QObject):
         self.reminder_window.input_address.clear()
         self.reminder_window.input_reminderName.clear()
         self.reminder_window.input_date.clear()
+        self.reminder_window.input_time.clear()
 
 
         self.reminder_window.show()
@@ -70,12 +71,12 @@ class Event_manager(QObject):
 
         while self.address is None:
             time.sleep(1.0)
-            self.address = location_getter_api.address
+            self.address = location_service.address
 
         self.location_updated.emit(self.address)
 
         while True:            
-            new_address = location_getter_api.address
+            new_address = location_service.address
 
             if new_address != self.address:
                 self.address = new_address
@@ -88,12 +89,14 @@ class Event_manager(QObject):
 
 
     def save_new_reminder(self):
-        current_address = location_getter_api.address
+        current_address = location_service.address
         name_of_reminder = self.reminder_window.input_reminderName.text().strip()
         address = self.reminder_window.input_address.text().strip()
         date_of_reminder = self.reminder_window.input_date.text().strip()
+        time_of_reminder = self.reminder_window.input_time.text().strip()
 
         date_format = "%d.%m.%Y"
+        time_format = "%H:%M"
 
         try:
             parsed_date_object = datetime.strptime(date_of_reminder, date_format).date()
@@ -101,6 +104,14 @@ class Event_manager(QObject):
         except ValueError:
             self.error_notify.show_error(f"The date '{date_of_reminder}' is not in the correct format (DD.MM.YYYY).")
             return
+        
+        try:
+            parsed_time_object = datetime.strptime(time_of_reminder, time_format).time()
+        
+        except ValueError:
+            self.error_notify.show_error(f"The time '{time_of_reminder}' is not in the correct format (HH:MM).")
+            return
+
 
         if current_address is None and address == "":
             self.error_notify.show_error("Warning!\n Your current location is unknown!")
@@ -109,7 +120,8 @@ class Event_manager(QObject):
         new_reminder = {
             "name": name_of_reminder,
             "address": current_address if not address else address,
-            "date": parsed_date_object
+            "date": parsed_date_object,
+            "time": parsed_time_object
         }
 
         self.reminder_repo.add_reminder(new_reminder)

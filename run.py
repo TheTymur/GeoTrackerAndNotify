@@ -1,7 +1,7 @@
 from GUI import MyGeoTrackerUI
-from Event_manager import Event_manager
+from Event_manager import EventManager
 from PyQt5.QtWidgets import QApplication
-from Event_manager import run_server
+from Event_manager import run_server, NotificationLogic
 import threading
 import sys
 
@@ -14,7 +14,10 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     main_window = MyGeoTrackerUI()
 
-    manager = Event_manager(main_window)   
+    notification = NotificationLogic(main_window)
+    notification.connect_signals()
+
+    manager = EventManager(main_window)   
     manager.create_reminder_signal_connection(main_window)
     manager.location_updated.connect(main_window.set_location)
 
