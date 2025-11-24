@@ -8,14 +8,13 @@ import sys
 
 if __name__ == "__main__":
 
-    flask_thread = threading.Thread(target=run_server, daemon=True)
-    flask_thread.start()
+    flask_thread = threading.Thread(target=run_server, daemon=True).start()
 
     app = QApplication(sys.argv)
     main_window = MyGeoTrackerUI()
 
     notification = NotificationLogic(main_window)
-    notification.connect_signals()
+    threading.Thread(target=notification.background_check, daemon=True).start()
 
     manager = EventManager(main_window)   
     manager.create_reminder_signal_connection(main_window)

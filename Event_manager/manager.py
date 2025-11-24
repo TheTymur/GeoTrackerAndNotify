@@ -5,12 +5,11 @@ import threading
 import time
 from . import reminder_repository
 from datetime import datetime
-from pathlib import Path
 import webbrowser
 
 __all__ = ["EventManager"]
 
-saved_reminders_path = Path(r"./saved_reminders/saved_reminders.db")
+saved_reminders_path = "./saved_reminders/saved_reminders.db"
 
 class EventManager(QObject):
 
