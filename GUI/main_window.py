@@ -14,12 +14,22 @@ class ReminderWidget(QFrame):
         super().__init__()
         self.setFrameShape(QFrame.StyledPanel)        
         self.layout = QVBoxLayout()
+        
+        self.button_reminder = QPushButton()
+        self.button_reminder.setMinimumHeight(80) 
+        
+        button_internal_layout = QVBoxLayout(self.button_reminder)
+        button_internal_layout.setContentsMargins(5, 5, 5, 5) 
+
         self.label = QLabel(reminder_text)
         self.label.setFont(QFont("Arial", 11))
+        self.label.setWordWrap(True) 
         
-        self.label.setWordWrap(True)
+        self.label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
 
-        self.layout.addWidget(self.label)
+        button_internal_layout.addWidget(self.label)
+
+        self.layout.addWidget(self.button_reminder)
         self.setLayout(self.layout)
 
 class MyGeoTrackerUI(QWidget):
