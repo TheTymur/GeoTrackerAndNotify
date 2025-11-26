@@ -51,7 +51,22 @@ def get_address(lat, lon):
         r.raise_for_status()
         result = r.json()
         if result.get("results"):
-            return result["results"][0].get("formatted")
+            components = result["results"][0].get("components", {})
+            street = components.get("road", "")
+            number = components.get("house_number", "")
+            city = components.get("city", "")
+
+            if number == " ":
+                address_short = f"{street}, {city}".strip()
+            
+            else:
+                address_short = f"{street} {number}, {city}".strip()
+
+            if not address_short:
+                return result["results"][0].get("formatted")
+            
+            return address_short
+        
     except Exception as e:
         error_handler.show_error(f"Error getting address: {e}")
     return None
