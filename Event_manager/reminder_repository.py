@@ -40,6 +40,17 @@ class RemindersRepositoryORM:
         self.session.add(new_reminder)
         self.session.commit()
 
+    def update_reminder(self, reminder_id, reminder_data):
+        reminder_to_edit = self.get_by_id(reminder_id)
+        if reminder_to_edit:
+            reminder_to_edit.name = reminder_data["name"]
+            reminder_to_edit.address = reminder_data["address"]
+            reminder_to_edit.date = reminder_data["date"]
+            reminder_to_edit.time = reminder_data["time"]
+            self.session.commit()
+
+
+
     def delete(self, reminder_id):
         reminder_to_delete = self.get_by_id(reminder_id)
         if reminder_to_delete:

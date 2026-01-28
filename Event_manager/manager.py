@@ -1,6 +1,7 @@
 from GUI import MyGeoTrackerUI, ErrorNotify, PermissionRequest, setupReminderScreen
 from . import location_service
 from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QMessageBox
 import threading
 import time
 from . import reminder_repository
@@ -14,14 +15,15 @@ saved_reminders_path = "./saved_reminders/saved_reminders.db"
 class EventManager(QObject):
 
     location_updated = pyqtSignal(str)
+    reminder_repo = reminder_repository.RemindersRepositoryORM(saved_reminders_path)
 
     def __init__(self, main_window):
         super().__init__()
         self.reminder_window = None
-        self.reminder_repo = reminder_repository.RemindersRepositoryORM(saved_reminders_path)
         self.main = main_window
         self.error_notify = ErrorNotify()
         self.permission_requesting()
+        self.current_editing_id = None
 
 
     def permission_requesting(self):    
@@ -54,6 +56,18 @@ class EventManager(QObject):
         self.reminder_window.show()
         self.reminder_window.raise_()
         self.reminder_window.activateWindow()
+
+    def open_edit_reminder_window(self, reminder_id):
+        self.current_editing_id = reminder_id
+        reminder = self.reminder_repo.get_by_id(reminder_id)
+        
+        self.open_create_reminder_window()
+        
+        self.reminder_window.setWindowTitle("Edit Reminder")
+        self.reminder_window.input_reminderName.setText(reminder.name)
+        self.reminder_window.input_address.setText(reminder.address)
+        self.reminder_window.input_date.setText(reminder.date.strftime("%d.%m.%Y"))
+        self.reminder_window.input_time.setText(reminder.time.strftime("%H:%M"))
     
 
     def get_all_reminder(self):
@@ -116,20 +130,48 @@ class EventManager(QObject):
             self.error_notify.show_error("Warning!\n Your current location is unknown!")
             return
         
-        new_reminder = {
+        reminder_data = {
             "name": name_of_reminder,
             "address": current_address if not address else address,
             "date": parsed_date_object,
             "time": parsed_time_object
         }
 
-        self.reminder_repo.add_reminder(new_reminder)
+        if self.current_editing_id is not None:
+            self.reminder_repo.update_reminder(self.current_editing_id, reminder_data)
+            self.current_editing_id = None
+
+        else:
+            self.reminder_repo.add_reminder(reminder_data)
+
         self.reminder_window.close()
         self.get_all_reminder()
+
         
  
     def create_reminder_signal_connection(self, main_window: MyGeoTrackerUI):
         main_window.button_createReminder.clicked.connect(self.open_create_reminder_window)
         main_window.button_getAll.clicked.connect(self.get_all_reminder)
+        main_window.reminder_selected_signal.connect(self.handle_reminder_click)
         
+
+    def handle_reminder_click(self, reminder_id):
+        print(f"Manager received request for reminder ID: {reminder_id}")
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("Manage Reminder")
+        msg_box.setText("What would you like to do with this reminder?")
+
+        edit_button = msg_box.addButton("Edit", QMessageBox.ActionRole)
+        delete_button = msg_box.addButton("Delete", QMessageBox.DestructiveRole)
+        cancel_button = msg_box.addButton(QMessageBox.Cancel)
+
+        msg_box.exec_()
+
+        if msg_box.clickedButton() == delete_button:
+            self.reminder_repo.delete(reminder_id)
+            self.get_all_reminder()
+
+        if msg_box.clickedButton() == edit_button:
+            self.open_edit_reminder_window(reminder_id)
+
 

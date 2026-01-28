@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import (QWidget, QLabel, QPushButton, 
                              QGridLayout, QScrollArea, 
                              QVBoxLayout, QFrame)
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QIcon
 import datetime
 from pathlib import Path
@@ -10,13 +10,16 @@ __all__ = ["MyGeoTrackerUI", "set_location"]
 saved_reminders_path = Path(r"./saved_reminders/saved_reminders.db")
 
 class ReminderWidget(QFrame):
-    def __init__(self, reminder_text):
+    clicked_signal = pyqtSignal(int)
+    def __init__(self,reminder_id, reminder_text):
         super().__init__()
         self.setFrameShape(QFrame.StyledPanel)        
         self.layout = QVBoxLayout()
-        
+        self.reminder_id = reminder_id
+
         self.button_reminder = QPushButton()
         self.button_reminder.setMinimumHeight(80) 
+        self.button_reminder.clicked.connect(lambda: self.clicked_signal.emit(self.reminder_id))
         
         button_internal_layout = QVBoxLayout(self.button_reminder)
         button_internal_layout.setContentsMargins(5, 5, 5, 5) 
@@ -33,6 +36,9 @@ class ReminderWidget(QFrame):
         self.setLayout(self.layout)
 
 class MyGeoTrackerUI(QWidget):
+
+    reminder_selected_signal = pyqtSignal(int)
+
     def __init__(self):
         super().__init__()
         self._setup_constants()
@@ -100,6 +106,10 @@ class MyGeoTrackerUI(QWidget):
 
         self.setLayout(self.layout)
 
+    def reminder_clicked_handler(self, reminder_id):
+        self.reminder_selected_signal.emit(reminder_id)
+
+
     def update_reminder_list(self, reminders_list):
 
         while self.reminders_layout.count():
@@ -110,9 +120,13 @@ class MyGeoTrackerUI(QWidget):
         for reminder in reminders_list:
             time =  reminder.time.strftime("%H:%M")
             text = f"ID: {reminder.id} <b> {reminder.name} </b> <br>Remind at: {reminder.address}, {time}, on {reminder.date}"
-            new_widget = ReminderWidget(text)
-            self.reminders_layout.addWidget(new_widget)         
 
+            new_widget = ReminderWidget(reminder.id, text)
+            new_widget.clicked_signal.connect(self.reminder_clicked_handler)
+
+            self.reminders_layout.addWidget(new_widget)
+
+    
         
 
 
