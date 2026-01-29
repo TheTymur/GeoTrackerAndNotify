@@ -7,18 +7,20 @@ from . import reminder_repository
 
 saved_reminders_path = "./saved_reminders/saved_reminders.db"
 
+
 class NotificationLogic():
+
+    reminder_repo = reminder_repository.RemindersRepositoryORM(saved_reminders_path)
+
     def __init__(self, main_window):
         self.main_window = main_window
         self.notification_UI = NotificationUI()
-        self.reminder_repo = reminder_repository.RemindersRepositoryORM(saved_reminders_path)
 
     def _send_notification(self, title, message=""):
         icon_type = QSystemTrayIcon.Information
         duration = 3000
 
         self.notification_UI.tray_icon.showMessage(title, message, icon_type, duration)
-        print("Sent")
 
     def _location_check(self, address_of_reminder):
         current_location = location_service.address
@@ -56,9 +58,7 @@ class NotificationLogic():
                 date_of_reminder = reminder.date.strftime("%Y-%m-%d")
                 if self._datetime_check(date_of_reminder, time_of_reminder_hours, time_of_reminder_minutes) and self._location_check(reminder.address):
                     self._send_notification(f"{reminder.name}, reminding you!")            
-                else:
-                    print(self._datetime_check(date_of_reminder, time_of_reminder_hours, time_of_reminder_minutes), self._location_check(reminder.address))     
-            time.sleep(300)
+            time.sleep(60)
 
 
 

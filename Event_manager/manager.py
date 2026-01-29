@@ -24,6 +24,7 @@ class EventManager(QObject):
         self.error_notify = ErrorNotify()
         self.permission_requesting()
         self.current_editing_id = None
+        self.get_all_reminder()        
 
 
     def permission_requesting(self):    
@@ -31,7 +32,6 @@ class EventManager(QObject):
         msg = "Would you like to give permission for geolocation?"
         user_said_yes = permission_box.show_requestbox(msg)
 
-        print(user_said_yes)
         if user_said_yes:
             self.main.set_location("Please wait... We are getting your location.")
             threading.Thread(target=self.background_update_location, daemon=True).start()
@@ -151,12 +151,10 @@ class EventManager(QObject):
  
     def create_reminder_signal_connection(self, main_window: MyGeoTrackerUI):
         main_window.button_createReminder.clicked.connect(self.open_create_reminder_window)
-        main_window.button_getAll.clicked.connect(self.get_all_reminder)
         main_window.reminder_selected_signal.connect(self.handle_reminder_click)
         
 
     def handle_reminder_click(self, reminder_id):
-        print(f"Manager received request for reminder ID: {reminder_id}")
         msg_box = QMessageBox()
         msg_box.setWindowTitle("Manage Reminder")
         msg_box.setText("What would you like to do with this reminder?")

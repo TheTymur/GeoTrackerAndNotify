@@ -90,12 +90,7 @@ class MyGeoTrackerUI(QWidget):
         self.button_createReminder.setFont(self.font_smaller_simple)
         self.button_createReminder.setFixedSize(200, 50)
         
-        self.button_getAll = QPushButton("Get all reminders")
-        self.button_getAll.setFont(self.font_smaller_simple)
-        self.button_getAll.setFixedSize(200, 50)
-        
         # Add buttons to Row 3, in separate columns for correct alignment
-        self.layout.addWidget(self.button_getAll, 3, 0, alignment=Qt.AlignLeft)
         self.layout.addWidget(self.button_createReminder, 3, 2, alignment=Qt.AlignRight)
 
         # Make Row 2 (the scroll area) expand vertically
