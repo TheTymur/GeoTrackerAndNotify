@@ -48,11 +48,11 @@ You will need valid OpenCage API key.
 - Instalation 
 1. In terminal or powershell write this:
 ```shell
-"pip install -r requirements.txt"
+pip install -r requirements.txt
 ```
 2. Create a file named .env in the 'Event_manager' folder and add your API key: 
 ```file
-"OPENCAGE_API_KEY=your_api_key_here"
+OPENCAGE_API_KEY=your_api_key_here
 ```
 3. You can run this application by command:
 ```shell
@@ -66,17 +66,17 @@ python run.py
 #### 1. Generate a Migration Script
 After modifying your SQLAlchemy models, run the following command to detect changes and create a version file: 
 ```shell
-"alembic revision --autogenerate -m "Describe your change here""
+alembic revision --autogenerate -m "Describe your change here"
 ```
 #### 2. Apply the Changes
 To apply the pending migrations to the actual saved_reminders.db database: 
 ```shell
-"alembic upgrade head"
+alembic upgrade head
 ```
 #### How to revert changes
 If you need to undo the last migration:
 ```shell
-"alembic downgrade -1"
+alembic downgrade -1
 ```
 ### Current limitations
 - Desktop Location Accuracy: Since standard desktops lack GPS chips, this app uses a workaround involving 'webbrowser' navigation to a local server to approximate location via Wi-Fi/IP. Accuracy may vary compared to mobile devices.
