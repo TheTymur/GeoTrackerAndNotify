@@ -1,6 +1,7 @@
 # GeoTracker&Notify
 
-## GeoTracker&Notify is a desktop application that goes beyond standard to-do lists by triggering reminders based on your real-time geographic location. It combines a robust PyQt5 interface with a background Flask server to handle geolocation data, ensuring you never forget a task when you arrive at a specific destination.
+## Intro
+GeoTracker&Notify is a desktop application that goes beyond standard to-do lists by triggering reminders based on your real-time geographic location. It combines a robust PyQt5 interface with a background Flask server to handle geolocation data, ensuring you never forget a task when you arrive at a specific destination.
 
 ### Technologies and tools used for this project:
 - Backend Logic: Python 3.x, Flask (Local Server)
