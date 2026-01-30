@@ -85,4 +85,4 @@ alembic downgrade -1
 - Tested and developed on Windows.
 
 ## Gallery
-![](.docs\gallery\image1.png)
+![](.\docs\gallery\image1.png)
