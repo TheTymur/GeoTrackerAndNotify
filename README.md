@@ -82,3 +82,4 @@ alembic downgrade -1
 ## Current limitations
 - Desktop Location Accuracy: Since standard desktops lack GPS chips, this app uses a workaround involving 'webbrowser' navigation to a local server to approximate location via Wi-Fi/IP. Accuracy may vary compared to mobile devices.
 - Browser Dependency: The application requires the browser to remain open or be opened periodically to refresh coordinates.
+- Tested and developed on Windows.
