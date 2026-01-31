@@ -64,6 +64,7 @@ class EventManager(QObject):
         self.open_create_reminder_window()
         
         self.reminder_window.setWindowTitle("Edit Reminder")
+        self.reminder_window.title.setText("Edit reminder")
         self.reminder_window.input_reminderName.setText(reminder.name)
         self.reminder_window.input_address.setText(reminder.address)
         self.reminder_window.input_date.setText(reminder.date.strftime("%d.%m.%Y"))

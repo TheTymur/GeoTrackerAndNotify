@@ -13,12 +13,12 @@ class setupReminderScreen(QDialog):
 
 
     def _setup_UI(self):
-        self.setWindowTitle("Manage reminder")
+        self.setWindowTitle("Create reminder")
         self.resize(400,200)
 
         self.layout = QGridLayout()
 
-        self.title = QLabel("Manage reminder")
+        self.title = QLabel("Create reminder")
         self.title.setFont(self.font_header)
 
         self.name_reminder = QLabel("Enter reminder:")
