@@ -85,9 +85,11 @@ alembic downgrade -1
 - Tested and developed on Windows.
 
 ## Gallery
-![](./docs/gallery/image1.png)
-![](./docs/gallery/image2.png)
-![](./docs/gallery/image3.png)
-![](./docs/gallery/image4.png)
-![](./docs/gallery/image5.png)
 
+<p align="center">
+  <img src="./docs/gallery/image1.png" width="45%" />
+  <img src="./docs/gallery/image2.png" width="45%" /> 
+  <img src="./docs/gallery/image3.png" width="45%" />
+  <img src="./docs/gallery/image4.png" width="45%" />
+  <img src="./docs/gallery/image5.png" width="45%" />
+</p>
