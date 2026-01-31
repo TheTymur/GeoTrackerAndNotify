@@ -88,7 +88,6 @@ alembic downgrade -1
 
 <p align="center">
   <img src="./docs/gallery/image1.png" width="45%" />
-  <img src="./docs/gallery/image2.png" width="45%" /> 
   <img src="./docs/gallery/image3.png" width="45%" />
   <img src="./docs/gallery/image4.png" width="45%" />
   <img src="./docs/gallery/image5.png" width="45%" />
